@@ -8,7 +8,7 @@
 // here, and they're passed back in on the next build.
 import { DEFAULT_SETTINGS, RELAY_URL } from "./config.js";
 import { PriceError, fetchAll } from "./prices.js";
-import { Python } from "./python.js";
+import { Python, StalledError } from "./python.js";
 import * as store from "./store.js";
 
 const $ = (id) => document.getElementById(id);
@@ -187,7 +187,12 @@ async function build(newFileName = null) {
   const { key, csv, settingsJson, fetched } = session;
   const dash = DASHBOARDS[key];
   step("build");
-  const targets = await targetsFor(key);
+  let targets;
+  try {
+    targets = await targetsFor(key);
+  } catch (e) {
+    return bug(e);
+  }
   const out = await py.call(
     "build", csv, settingsJson, JSON.stringify(targets), JSON.stringify(fetched),
     key, dash.title, dash.download,
@@ -225,6 +230,15 @@ function unique(lines) {
 
 function bug(e) {
   console.error(e);
+  if (e instanceof StalledError) {
+    problem({
+      title: "Python stopped responding",
+      intro: "This device stopped running the tracker, most likely because it ran out of memory. " +
+        "Phones, iPhones especially, can hit this. Close other tabs and try again, or use a computer.",
+      errors: [e.message], retry: () => location.reload(), pick: false,
+    });
+    return null;
+  }
   problem({
     title: "Something went wrong",
     intro: "This is a bug in the tracker, not a problem with your file. Reloading the page may help.",

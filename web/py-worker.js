@@ -31,8 +31,14 @@ const ready = (async () => {
 
 // If a download is cut off mid-way, Pyodide can reject an internal promise
 // and leave loadPyodide pending forever; catch that so the page can say so.
+// Once loaded, such an error means Python itself broke mid-call (so no reply
+// is coming): send it as a crash, which fails the waiting call.
 let loaded = false;
-const fail = (e) => { if (!loaded) status(`failed: ${e?.message || e}`); };
+const fail = (e) => {
+  const message = String(e?.message || e);
+  if (!loaded) status(`failed: ${message}`);
+  else self.postMessage({ crash: message });
+};
 self.addEventListener("unhandledrejection", (e) => fail(e.reason));
 ready.then(() => { loaded = true; status("ready"); }, fail);
 
