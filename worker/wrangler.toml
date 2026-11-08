@@ -1,0 +1,21 @@
+# Price relay for the web edition — see src/index.js and README.md.
+name = "shares-tracker-prices"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+# Websites allowed to use the relay: your GitHub Pages address, e.g.
+# "https://yourname.github.io" (comma-separate several). http://localhost on
+# any port is always allowed, for testing.
+ALLOWED_ORIGINS = "https://jackhill24.github.io"
+
+# Per visitor (by IP address): one dashboard build is roughly 10–60 requests.
+[[ratelimits]]
+name = "LIMITER"
+namespace_id = "1001"
+simple = { limit = 120, period = 60 }
+
+# No request logs: the tickers someone asks for say what they hold.
+[observability]
+enabled = false

@@ -1,0 +1,23 @@
+# Byte-compiled / tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+
+# SQLite persistence (generated at runtime)
+*.db
+*.db-wal
+*.db-shm
+
+# Your own data — never commit it. The fictional demo portfolio is the exception.
+data/*
+!data/demo_trades.csv
+!data/demo_allocation.yaml
+
+# Rendered dashboards, and the built website (web/build.py)
+output/
+web/dist/
+
+# Node tooling (the Cloudflare Worker, the Pyodide check)
+node_modules/
+.wrangler/

@@ -1,0 +1,21 @@
+# Shares tracker configuration.
+#
+# Optional — if this file is absent, the defaults below are used and the app
+# runs unchanged. Benchmarks MUST be AUD-quoted (e.g. .AX ETFs) so no FX layer
+# is needed; their history is fetched through the same cache as your holdings.
+
+base_currency: AUD
+
+benchmarks:
+  - ticker: VAS.AX
+    label: ASX 300
+  - ticker: IVV.AX
+    label: S&P 500 (AUD)
+
+# Goals are no longer configured here — set your goal interactively in the
+# dashboard's Goal Planner section (it saves your settings in the browser).
+
+# Risk analytics (Phase 5). rba_cash_rate is the risk-free rate used for the
+# Sharpe ratio, as a fraction p.a. Defaults to 0.0435 (4.35%) if omitted.
+risk:
+  rba_cash_rate: 0.0435

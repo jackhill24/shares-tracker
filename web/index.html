@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shares Tracker</title>
+  <meta name="description" content="A dashboard for your share portfolio from a CSV of your trades. Runs entirely in your browser.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314b8a6'/%3E%3Cpath d='M7 22l6-6 4 4 8-9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="bar">
+    <button class="brand" type="button" data-go="landing" aria-label="Shares Tracker home">
+      <span class="logo" aria-hidden="true"></span>Shares Tracker
+    </button>
+    <span class="badge" id="dash-badge" hidden></span>
+    <nav class="bar-actions" id="dash-actions" hidden>
+      <button class="btn small ghost" type="button" data-open="settings-dialog">Settings</button>
+      <button class="btn small ghost" type="button" data-open="data-dialog" id="data-button">Your data</button>
+    </nav>
+  </header>
+
+  <!-- Landing -->
+  <main id="landing" class="view">
+    <section class="hero">
+      <h1>See your share portfolio clearly</h1>
+      <p class="lede">
+        Upload your trades as a CSV and get a dashboard: value and returns, a
+        holdings map, targets, net-worth history, performance against an index
+        and risk. It all runs in your browser, so your trades never leave it.
+      </p>
+      <div class="actions">
+        <button class="btn primary" type="button" id="try-demo">Try the demo</button>
+        <button class="btn" type="button" data-pick="trades">Upload my trades.csv</button>
+      </div>
+      <div class="drop" id="drop">or drop your CSV file here</div>
+      <p class="restore-hint">Have a file from <i>Export my data</i>? <button class="link" type="button" data-pick="restore">Restore it</button></p>
+      <p class="py-status" id="py-status" aria-live="polite">Getting Python ready in the background…</p>
+    </section>
+
+    <section class="card returning" id="returning" hidden>
+      <div>
+        <h2>Welcome back</h2>
+        <p id="returning-text"></p>
+      </div>
+      <button class="btn primary" type="button" id="open-mine">Open my dashboard</button>
+    </section>
+
+    <section class="info">
+      <article class="card">
+        <h2>Your trades stay with you</h2>
+        <p>
+          The calculations run in this browser tab, and your trades, targets and
+          settings are saved only in this browser. To look up prices, the page
+          sends ticker symbols and date ranges, and nothing else, to a small price
+          relay, which passes them on to Yahoo Finance.
+        </p>
+        <p>
+          <b>Not financial advice.</b> Every figure is an estimate and prices can
+          be delayed or wrong. Check anything important against your broker.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>The CSV format</h2>
+        <p>One row per buy or sell, with these columns:</p>
+        <dl class="columns">
+          <dt>code</dt><dd>Ticker as your broker shows it: <code>VAS</code>, <code>AAPL</code>, <code>BTC</code></dd>
+          <dt>exchange</dt><dd><code>ASX</code>, <code>NASDAQ</code>, <code>NYSE</code>, <code>LSE</code>, <code>HKEX</code>, <code>TSX</code>, <code>XMIL</code>, <code>CRYPTO</code> (USD) or <code>CRYPTO-AUD</code></dd>
+          <dt>date</dt><dd><code>2024-03-15</code> or <code>15/03/2024</code>, day first</dd>
+          <dt>type</dt><dd><code>buy</code>, <code>sell</code> or <code>drp</code></dd>
+          <dt>quantity</dt><dd>Units, always positive</dd>
+          <dt>unit_price</dt><dd>Price per unit in the exchange's currency</dd>
+          <dt>platform</dt><dd>Your broker's name</dd>
+          <dt>fees</dt><dd><i>Optional.</i> Brokerage, in the exchange's currency</dd>
+        </dl>
+        <p><a href="template.csv" download="trades-template.csv">Download a template CSV</a></p>
+      </article>
+
+      <article class="card">
+        <h2>Good to know</h2>
+        <ul class="limits">
+          <li>Values are in Australian dollars.</li>
+          <li>Only the exchanges listed under <i>exchange</i> are supported.</li>
+          <li>Numeric dates are read day first. Convert US-style <code>MM/DD/YYYY</code> dates first.</li>
+          <li>Share splits aren't handled yet. A holding that has split will show the wrong value.</li>
+          <li>There's no sector breakdown yet.</li>
+          <li>The first visit downloads about 25 MB, since Python runs in the page. Later visits load it from your browser's cache.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <!-- Progress -->
+  <main id="working" class="view" hidden>
+    <section class="card narrow">
+      <h2 id="work-title">Building your dashboard</h2>
+      <ol class="steps" id="steps">
+        <li data-step="python">Loading Python <span class="detail"></span></li>
+        <li data-step="check">Checking your trades <span class="detail"></span></li>
+        <li data-step="prices">Fetching prices <span class="detail"></span></li>
+        <li data-step="build">Building the dashboard <span class="detail"></span></li>
+      </ol>
+      <p class="hint" id="work-hint">The first visit downloads about 25 MB. After that it comes from your browser's cache.</p>
+    </section>
+  </main>
+
+  <!-- Something went wrong -->
+  <main id="problem" class="view" hidden>
+    <section class="card narrow">
+      <h2 id="problem-title">That file didn't work</h2>
+      <p id="problem-intro"></p>
+      <ul class="problems" id="problem-list"></ul>
+      <div class="actions">
+        <button class="btn primary" type="button" id="problem-retry" hidden>Try again</button>
+        <button class="btn primary" type="button" data-pick="trades" id="problem-pick">Choose another file</button>
+        <button class="btn ghost" type="button" data-go="landing">Back</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Dashboard -->
+  <div id="dash" class="view dash" hidden>
+    <div class="notices" id="notices" hidden>
+      <details>
+        <summary id="notices-summary"></summary>
+        <ul id="notices-list"></ul>
+      </details>
+      <button class="close" type="button" id="notices-close" aria-label="Dismiss">×</button>
+    </div>
+    <iframe id="frame" title="Portfolio dashboard"></iframe>
+  </div>
+
+  <!-- Settings -->
+  <dialog id="settings-dialog">
+    <form method="dialog" id="settings-form">
+      <h2>Settings</h2>
+      <fieldset>
+        <legend>Benchmarks</legend>
+        <p class="hint">
+          Your returns are compared with putting the same money into each of
+          these on the same dates. They must be priced in AUD (an ASX-listed
+          ETF such as <code>VAS.AX</code>). The first is also used for beta.
+        </p>
+        <div class="bench-head" aria-hidden="true"><span>Yahoo ticker</span><span>Label</span><span></span></div>
+        <div id="bench-rows"></div>
+        <button class="btn small ghost" type="button" id="bench-add">+ Add benchmark</button>
+      </fieldset>
+      <fieldset>
+        <legend>Risk</legend>
+        <label class="field">
+          <span>Risk-free rate (% a year, for the Sharpe ratio)</span>
+          <input type="number" id="risk-free" min="0" max="20" step="0.05" required>
+        </label>
+      </fieldset>
+      <p class="form-error" id="settings-error" role="alert"></p>
+      <div class="actions end">
+        <button class="btn ghost" type="button" id="settings-reset">Reset to defaults</button>
+        <button class="btn ghost" type="button" data-close>Cancel</button>
+        <button class="btn primary" type="submit" value="save">Save and rebuild</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Your data -->
+  <dialog id="data-dialog">
+    <div class="dialog-body">
+      <h2>Your data</h2>
+      <p id="data-summary"></p>
+      <div class="data-actions">
+        <div>
+          <button class="btn" type="button" data-pick="trades">Replace trades</button>
+          <p class="hint">Upload an updated CSV. Your targets and goal settings are kept.</p>
+        </div>
+        <div>
+          <button class="btn" type="button" id="export-data">Export my data</button>
+          <p class="hint">Trades, targets, settings and goal planner as one file.
+            Keep a copy: Safari can delete a site's saved data after a few weeks without a visit.</p>
+        </div>
+        <div>
+          <button class="btn" type="button" data-pick="restore">Restore from an export</button>
+          <p class="hint">Load a file made with Export my data.</p>
+        </div>
+        <div>
+          <button class="btn danger" type="button" id="clear-data">Clear my data</button>
+          <p class="hint">Removes everything this site saved in this browser.</p>
+        </div>
+      </div>
+      <div class="actions end">
+        <button class="btn ghost" type="button" data-close>Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <input type="file" id="pick-trades" accept=".csv,text/csv" hidden>
+  <input type="file" id="pick-restore" accept=".json,application/json" hidden>
+</body>
+</html>

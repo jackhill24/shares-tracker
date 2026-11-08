@@ -1,0 +1,14 @@
+{
+  "name": "shares-tracker-prices",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker relaying daily prices to the shares tracker web edition.",
+  "scripts": {
+    "test": "node --test test/chart.test.mjs && node test/integration.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "4.151.1"
+  }
+}

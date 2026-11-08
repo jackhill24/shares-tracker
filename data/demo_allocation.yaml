@@ -1,0 +1,31 @@
+# Demo portfolio — target allocation (fictional).
+# Buckets are yours to name; targets are % of the assigned portfolio and
+# should add up to 100. Edit here or in the dashboard's Targets section.
+buckets:
+  - id: "core"
+    label: "Core"
+    target: 50
+  - id: "quality_growth"
+    label: "Active / Quality Growth"
+    target: 25
+  - id: "high_conviction"
+    label: "High Conviction"
+    target: 15
+  - id: "speculative"
+    label: "Speculative"
+    target: 10
+# On target within ± the smaller of these (the "5/25 rule").
+tolerance:
+  absolute_pp: 5
+  relative_pct: 25
+# One bucket per ticker code. Quote codes that YAML could misread (e.g. "NO").
+holdings:
+  "VAS": "core"
+  "CSL": "quality_growth"
+  "MSFT": "quality_growth"
+  "AAPL": "quality_growth"
+  "BHP": "quality_growth"
+  "NVDA": "high_conviction"
+  "ZIP": "speculative"
+  "BTC": "speculative"
+  "ETH": "speculative"

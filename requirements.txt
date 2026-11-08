@@ -1,0 +1,6 @@
+pandas==3.0.3
+numpy==2.4.6
+yfinance==1.4.1
+plotly==6.7.0
+Jinja2==3.1.6
+PyYAML==6.0.3

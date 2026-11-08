@@ -1,0 +1,16 @@
+code,exchange,date,type,quantity,unit_price,platform,fees
+AAA,ASX,2021-06-01,buy,100,10.00,Test Broker,20.00
+AAA,ASX,2023-06-01,sell,100,15.00,Test Broker,10.00
+AAA,ASX,2024-01-15,buy,50,12.00,Test Broker,
+BBB,ASX,2021-08-01,buy,200,5.00,Test Broker,
+BBB,ASX,2021-09-01,buy,200,6.00,Test Broker,
+BBB,ASX,2023-10-01,sell,300,8.00,Test Broker,
+CCC,ASX,2024-07-10,buy,100,10.00,Test Broker,
+CCC,ASX,2025-07-10,sell,50,12.00,Test Broker,
+DDD,ASX,2024-07-09,buy,100,20.00,Test Broker,
+DDD,ASX,2025-07-10,sell,50,15.00,Test Broker,
+MSFT,NASDAQ,2022-03-01,buy,10,280.00,Test Broker,
+MSFT,NASDAQ,2023-03-01,sell,5,300.00,Test Broker,
+MSFT,NASDAQ,2024-05-01,buy,5,310.00,Test Broker,
+BTC,CRYPTO,2022-01-10,buy,0.5,45000.00,Test Broker,
+BTC,CRYPTO,2022-06-10,sell,0.2,30000.00,Test Broker,

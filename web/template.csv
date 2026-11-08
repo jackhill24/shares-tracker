@@ -1,0 +1,6 @@
+code,exchange,date,type,quantity,unit_price,platform,fees
+VAS,ASX,2023-02-14,buy,40,87.35,CommSec,9.95
+AAPL,NASDAQ,2023-06-15,buy,6,183.20,Stake,3.00
+BTC,CRYPTO,2023-09-01,buy,0.05,25900,CoinSpot,
+VAS,ASX,2024-08-19,drp,2,96.10,CommSec,
+VAS,ASX,2025-03-03,sell,10,99.80,CommSec,9.95
